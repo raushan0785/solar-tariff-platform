@@ -1,17 +1,20 @@
-// Fetch tariff data using AJAX
+// Fetch and display tariff data
 function fetchTariffData() {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', 'http://localhost:3000/tariff', true);
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            const data = JSON.parse(xhr.responseText);
-            displayTariffData(data);
-        }
-    };
-    xhr.send();
+    fetch('http://localhost:3000/api/tariff')
+        .then(response => response.json())
+        .then(data => displayTariffData(data))
+        .catch(error => console.error('Error fetching tariff data:', error));
 }
 
-// Display the fetched tariff data
+// Fetch and display energy data
+function fetchEnergyData() {
+    fetch('http://localhost:3000/api/energy')
+        .then(response => response.json())
+        .then(data => displayEnergyData(data))
+        .catch(error => console.error('Error fetching energy data:', error));
+}
+
+// Display the tariff data on the page
 function displayTariffData(data) {
     const tariffInfo = document.getElementById('tariff-info');
     tariffInfo.innerHTML = `
@@ -23,5 +26,17 @@ function displayTariffData(data) {
     `;
 }
 
-// Fetch tariff data when the page loads
-window.onload = fetchTariffData;
+// Display the energy data on the page
+function displayEnergyData(data) {
+    const energyInfo = document.getElementById('energy-info');
+    energyInfo.innerHTML = `
+        <p>Monthly Consumption: ${data.consumption} kWh</p>
+        <p>Solar Production: ${data.solarProduction} kWh</p>
+    `;
+}
+
+// Fetch data when the page loads
+window.onload = function () {
+    fetchTariffData();
+    fetchEnergyData();
+};
