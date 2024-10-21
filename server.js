@@ -30,6 +30,28 @@ app.get('/api/tariff', (req, res) => {
 app.get('/api/energy', (req, res) => {
     res.json(energyData);
 });
+// Add this to server.js
+
+const recommendations = {
+    recommendation: "Run appliances between 12:00 PM - 3:00 PM for lower rates.",
+    alert: "Warning: High tariffs expected from 3:00 PM - 6:00 PM!"
+};
+
+// API to get energy recommendations
+app.get('/api/recommendation', (req, res) => {
+    res.json(recommendations);
+});
+const getApplianceSchedule = () => {
+    const currentHour = new Date().getHours();
+    if (currentHour < 12) return "Recommended time: Now!";
+    else if (currentHour < 15) return "Recommended time: 12:00 PM - 3:00 PM.";
+    else return "Avoid using appliances until 6:00 PM.";
+};
+
+app.get('/api/schedule', (req, res) => {
+    res.json({ schedule: getApplianceSchedule() });
+});
+
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
