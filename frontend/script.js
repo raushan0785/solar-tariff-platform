@@ -34,9 +34,48 @@ function displayEnergyData(data) {
         <p>Solar Production: ${data.solarProduction} kWh</p>
     `;
 }
+// Fetch and display recommendations and alerts
+function fetchRecommendations() {
+    fetch('http://localhost:3000/api/recommendation')
+        .then(response => response.json())
+        .then(data => displayRecommendation(data))
+        .catch(error => console.error('Error fetching recommendations:', error));
+}
 
-// Fetch data when the page loads
+// Display the recommendation and alert on the page
+function displayRecommendation(data) {
+    const alertInfo = document.getElementById('alert-info');
+    alertInfo.innerHTML = `
+        <p><strong>Recommendation:</strong> ${data.recommendation}</p>
+        <p class="alert"><strong>Alert:</strong> ${data.alert}</p>
+    `;
+}
+// Fetch and display smart appliance schedule
+function fetchApplianceSchedule() {
+    fetch('http://localhost:3000/api/schedule')
+        .then(response => response.json())
+        .then(data => displayApplianceSchedule(data))
+        .catch(error => console.error('Error fetching appliance schedule:', error));
+}
+
+// Display the fetched schedule in the UI
+function displayApplianceSchedule(data) {
+    const scheduleInfo = document.getElementById('schedule-info');
+    scheduleInfo.innerHTML = `
+        <p><strong>Smart Schedule:</strong> ${data.schedule}</p>
+    `;
+}
+
+// Fetch all data when the page loads
 window.onload = function () {
     fetchTariffData();
     fetchEnergyData();
+    fetchRecommendations();
+    fetchApplianceSchedule(); // New function call
 };
+
+
+
+
+
+
