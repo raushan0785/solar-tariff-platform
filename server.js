@@ -51,6 +51,12 @@ const getApplianceSchedule = () => {
 app.get('/api/schedule', (req, res) => {
     res.json({ schedule: getApplianceSchedule() });
 });
+// Handle appliance usage simulation
+app.post('/api/appliance', express.json(), (req, res) => {
+    const { appliance, status } = req.body;
+    console.log(`${appliance} is now ${status ? 'ON' : 'OFF'}`);
+    res.json({ message: `${appliance} status updated` });
+});
 
 
 app.listen(port, () => {
