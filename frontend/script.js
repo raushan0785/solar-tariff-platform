@@ -65,6 +65,80 @@ function displayApplianceSchedule(data) {
         <p><strong>Smart Schedule:</strong> ${data.schedule}</p>
     `;
 }
+// Store the state of running appliances
+let runningAppliances = [];
+
+// Toggle appliance on/off and update the display
+function toggleAppliance(appliance) {
+    const index = runningAppliances.indexOf(appliance);
+
+    if (index === -1) {
+        // Turn appliance on
+        runningAppliances.push(appliance);
+    } else {
+        // Turn appliance off
+        runningAppliances.splice(index, 1);
+    }
+    updateApplianceStatus();
+}
+
+// Update the status display
+function updateApplianceStatus() {
+    const statusDiv = document.getElementById('appliance-status');
+    if (runningAppliances.length === 0) {
+        statusDiv.innerHTML = `<p>No appliances running.</p>`;
+    } else {
+        statusDiv.innerHTML = `<p>Running: ${runningAppliances.join(', ')}</p>`;
+    }
+}
+// Send appliance status to the backend
+function sendApplianceStatus(appliance, status) {
+    fetch('http://localhost:3000/api/appliance', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ appliance, status })
+    })
+    .then(response => response.json())
+    .then(data => console.log(data.message))
+    .catch(error => console.error('Error updating appliance status:', error));
+}
+
+// Modify toggle function to include backend communication
+function toggleAppliance(appliance) {
+    const index = runningAppliances.indexOf(appliance);
+
+    let status;
+    if (index === -1) {
+        runningAppliances.push(appliance);
+        status = true;  // Appliance turned ON
+    } else {
+        runningAppliances.splice(index, 1);
+        status = false; // Appliance turned OFF
+    }
+    updateApplianceStatus();
+    sendApplianceStatus(appliance, status);  // Send status to backend
+}
+function toggleAppliance(appliance) {
+    const button = document.querySelector(`button[onclick="toggleAppliance('${appliance}')"]`);
+    button.disabled = true;  // Disable button during API call
+
+    const index = runningAppliances.indexOf(appliance);
+    let status = (index === -1);
+
+    if (status) {
+        runningAppliances.push(appliance);
+    } else {
+        runningAppliances.splice(index, 1);
+    }
+
+    updateApplianceStatus();
+    sendApplianceStatus(appliance, status).finally(() => {
+        button.disabled = false;  // Re-enable button after call completes
+    });
+}
+
 
 // Fetch all data when the page loads
 window.onload = function () {
